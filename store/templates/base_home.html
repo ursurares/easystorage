@@ -1,0 +1,36 @@
+{% extends 'base_generic.html' %}
+{% block navbar %}
+    
+    <nav class="navbar navbar-dark navbar-expand-md bg-dark justify-content-center">
+    <a href="#" class="navbar-brand d-flex w-50 mr-auto">EasyStore</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbar3">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-collapse collapse w-100" id="collapsingNavbar3">
+        <ul class="navbar-nav ml-auto w-100 justify-content-end">
+            <li class="nav-item active">
+                <a class="nav-link m-2 disabled" href="#">{{ user.first_name }}</a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'logout' %}" class="nav-link m-2 menu-item">Log Out</a>
+            </li>
+            
+        </ul>
+    </div>
+    </nav>
+{% endblock %}
+{% block content %}
+  
+<div class="container ">
+  <p>Welcome {{ user.first_name }}!</p>
+  
+  <p>You have visisted this page {{num_visits}}
+    {% if num_visits == 1 %}time. 
+    {% else %} times.
+    {% endif %}
+  </p>
+  {% block docs %}
+  {% endblock %}
+  {% include "store\doc_list.html" %} 
+</div>
+{% endblock %}

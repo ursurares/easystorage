@@ -1,0 +1,78 @@
+
+
+{% load crispy_forms_tags %}
+
+{% block upload %}
+    <h2>Upload Docs</h2>
+    <form method="POST" enctype="multipart/form-data" id='test1'>
+        {% csrf_token %}
+        {{form|crispy}}
+        <button type="submit" class="btn btn-primary btn-sm float-left" onclick='showFileSize();'>Upload</button>
+    </form>
+    <script type='text/javascript'>
+      function showFileSize() {
+          var input, file;
+
+          // (Can't use `typeof FileReader === "function"` because apparently
+          // it comes back as "object" on some browsers. So just see if it's there
+          // at all.)
+          if (!window.FileReader) {
+              alert( "The file API isn't supported on this browser yet.");
+              return;
+          }
+
+          input = document.getElementById('id_source');
+          if (!input) {
+              alert( "Um, couldn't find the fileinput element.");
+          }
+          else if (!input.files) {
+              alert( "This browser doesn't seem to support the `files` property of file inputs.");
+          }
+          else if (!input.files[0]) {
+              alert("Please select a file before clicking 'Upload'");
+          }
+          else {
+              file = input.files[0];
+              if(file.size>1073741822){
+                alert( "File " + file.name + " is too big. You can only upload files smaller than 1GB);
+              }
+              return;
+              
+          }
+      }
+
+      function bodyAppend(tagName, innerHTML) {
+          var elm;
+
+          elm = document.createElement(tagName);
+          elm.innerHTML = innerHTML;
+          document.body.appendChild(elm);
+      }
+    </script>
+    {% comment %} <script>
+      console.log("xxx");
+      console.log("aiurea");
+      $('#id_source').live('change',function(){
+        $('#id_source').bind('change', function() {
+          if(this.files[0].size>107){
+            alert("File too large!");
+            console.log("file too large");
+          }
+        });
+      })
+      
+    </script> {% endcomment %}
+
+{% comment %} <form class="md-form" action="#">
+  <div class="file-field">
+    <div class="btn btn-primary btn-sm float-left">
+      <span>Choose files</span>
+      <input type="file" name="doc" multiple>
+    </div>
+    <div class="file-path-wrapper">
+      <input class="file-path validate" type="text" placeholder="Upload one or more files">
+    </div>
+  </div>
+</form> {% endcomment %}
+
+{% endblock %}

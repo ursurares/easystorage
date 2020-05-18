@@ -1,0 +1,120 @@
+
+
+{% block docs %}
+    {% block content_header %}
+
+    <style>
+        #tooltip {
+        background: #333;
+        color: white;
+        font-weight: bold;
+        padding: 4px 8px;
+        font-size: 13px;
+        border-radius: 4px;
+        display: none;
+        }
+
+        #tooltip[data-show] {
+        display: block;
+        }
+
+        #arrow,
+        #arrow::before {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        z-index: -1;
+        }
+
+        #arrow::before {
+        content: '';
+        transform: rotate(45deg);
+        background: #333;
+        }
+
+        #tooltip[data-popper-placement^='top'] > #arrow {
+        bottom: -4px;
+        }
+
+        #tooltip[data-popper-placement^='bottom'] > #arrow {
+        top: -4px;
+        }
+
+        #tooltip[data-popper-placement^='left'] > #arrow {
+        right: -4px;
+        }
+
+        #tooltip[data-popper-placement^='right'] > #arrow {
+        left: -4px;
+        }
+        .box-shadow--4dp {
+        box-shadow: 0 4px 5px 0 rgba(0, 0, 0, .14), 0 1px 10px 0 rgba(0, 0, 0, .12), 0 2px 4px -1px rgba(0, 0, 0, .2)
+        }
+    </style>
+
+    <h2>Docs</h2>
+    <h3>{{user_folder}}</h3>
+    {% if upload_available is True%}
+        <a href="{% url 'upload_doc' %}" class="btn btn-outline-primary box-shadow--4dp">
+            Upload File
+        </a>
+        
+    {% else %}
+        <style>
+            .tooltip-wrapper {
+                display: inline-block;
+            }
+            
+        </style>
+        <div class="tooltip-wrapper" data-title="Storage size exceeded! Free up some storage before uploading something new.">
+        <a href="{% url 'upload_doc' %}" class="btn btn-outline-primary disabled" aria-disabled="true" data-placement="right" data-toggle="tooltip" title="Hooray!">
+            Upload File
+        </a>
+        </div>
+        <script>
+            $(function() {
+                $('.tooltip-wrapper').tooltip({position: "bottom"});
+            });
+        </script>
+        
+    {% endif %}
+    {% endblock %}
+    <p>{{ totalsize_ceil }}% of available storage used</p>
+    <div class="shadow-sm p-3 mb-2 bg-light rounded">
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated {{ progressbar_color }}" role="progressbar" style="width: {{ totalsize_ceil }}%;" aria-valuenow="{{ totalsize_ceil }}" aria-valuemin="0" aria-valuemax="1000"></div>
+    </div>
+    </div>
+    <div>
+        <table class="table table-hover table-dark table-bordered">
+            <caption>Your uploaded files</caption>
+            <thead >
+                <tr>
+                    <th class="text-center">Title</th>
+                    <th class="text-center">Size</th>
+                    <th class="text-center">Source</th>
+                    <th class="text-center">Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doc in docs %}
+                <tr>
+                    <td class="text-center">{{doc.filename}}</td>
+                    <td class="text-center">{{ doc.size|filesizeformat }}</td>
+                    
+                    <td class="text-center">
+                        <a href="{{ doc.url }}" class="badge badge-pill badge-primary" target="_blank">
+                            Download
+                        </a></td>
+                    <td class="text-center">
+                        <form method="post" action="{% url 'delete_doc' doc.pk%}">
+                            {% csrf_token %}
+                            <button type="submit" class="badge badge-pill badge-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

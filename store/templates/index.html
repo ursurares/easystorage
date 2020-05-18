@@ -1,0 +1,9 @@
+{% extends "base_generic.html" %}
+
+
+{% block content %}
+  
+  <h1>Welcome to EasyStore!</h1>
+  <p>Welcome {{ user.first_name }}!</p>
+  <a href="{% url 'login' %}" >Go to login</a>
+{% endblock %}
