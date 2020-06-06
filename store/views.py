@@ -1,15 +1,26 @@
-from django.shortcuts import render,redirect
-from django.views.generic import TemplateView,ListView, CreateView
+from django.shortcuts import render,redirect,reverse
+from django.views.generic import TemplateView,ListView, CreateView,FormView
 from django.core.files.storage import FileSystemStorage
 from django.urls import reverse_lazy
-from .forms import DocumentForm,RegisterFrom
-from .models import Document
+from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required,user_passes_test
 import math
 from django.core.mail import send_mail
+from django.views import View 
+import uuid
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.core.mail import EmailMessage
+from django.template.loader import get_template
+from django.utils.encoding import force_bytes, force_text
+from django.conf import settings
+
+from .forms import DocumentForm,Document2Form,RegisterFrom
+from .models import Document
+from .tokens import user_tokenizer
+
 
 totalsize_global=0
 
@@ -24,7 +35,7 @@ def home(request):
     docs=Document.objects.filter(user=request.user)
     user_folder=f'user_{request.user.id}'
     totalsize=get_total_size(docs)
-    set_total_size_global(totalsize_global)
+    set_total_size_global(totalsize)
     totalsize_bytes=totalsize
     totalsize=totalsize/10000000
     totalsize_ceil=totalsize*100
@@ -39,12 +50,10 @@ def home(request):
         progressbar_color="bg-warning"
     else:
         progressbar_color="bg-danger"
-    print(totalsize_bytes)
     if totalsize_bytes>1073741824:
         upload_available=False
     else:
         upload_available=True
-    
     
     context = {
         'num_visits':num_visists,
@@ -59,7 +68,9 @@ def home(request):
     return render(request,'base_home.html',context=context)
 
 def set_total_size_global(size):
+    global totalsize_global
     totalsize_global=size
+
 
 def get_total_size(docs):
     totalsize=0
@@ -100,21 +111,58 @@ def docs_list(request):
         'docs':docs,
     })
 
-
+@login_required
 def upload_doc(request):
-    if request.method == 'POST':
-        form = DocumentForm(request.POST,request.FILES)
-        if form.is_valid():
-            file=Document(source=request.FILES['source'])
-            file.user=request.user
-            file.save()
-            return redirect('home')
+    if totalsize_global<1073741824:
+        if request.method == 'POST':
+            form = DocumentForm(request.POST,request.FILES)
+            if form.is_valid():
+                file=Document(source=request.FILES['source'])
+                file.user=request.user
+                file.title=file.filename
+                file.validate_unique()
+                file.clean_fields()
+                file.save()
+                return redirect('home')
+        else:
+            form=DocumentForm()
     else:
-        form=DocumentForm()
+        return redirect('home')
+    
 
     return render(request,'store/upload_doc.html',{
         'form':form
     })
+
+def handle_chunk_upload(file):
+    doc_model=Document(file)
+    ext = file.name.split('.')[-1]
+    filename = "%s.%s" % (uuid.uuid4(), ext)
+    with open(f'media/{filename}','wb+') as destination:
+        for chunk in file.chunks():
+            destination.write(chunk)
+
+class DocumentView(FormView):
+    form_class=Document2Form
+    template_name='store/upload.html'
+    model=Document
+    success_url= reverse_lazy('home')
+
+    def post(self,request,*args,**kwargs):
+        form_class=self.get_form_class()
+        form=self.get_form(form_class)
+        files=request.FILES.getlist('file_field')
+        if form.is_valid():
+            for file in files:
+                print(type(file).__name__)
+                for attributes in dir(file):
+                    print(attributes)
+                """ doc_model=Document(source=file)
+                print(doc_model.filename+" "+doc_model.uploader+" "+doc_model.url) """
+                #handle_chunk_upload(file)
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
 def delete_doc(request,pk):
     if request.method=='POST':
@@ -167,8 +215,53 @@ def register(request):
     context['form']=form
     return render(request,'signup.html',context)
 
-def percent_available(request):
-    context={}
+class RegisterView(View):
+    def get(self, request):
+        return render(request, 'signup.html', { 'form': RegisterFrom() })
+
+    def post(self, request):
+        form = RegisterFrom(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_valid = False
+            user.save()
+            token = user_tokenizer.make_token(user)
+            user_id = urlsafe_base64_encode(force_bytes(user.id))
+            url = 'http://localhost:8000' + reverse('confirm_email', kwargs={'user_id': user_id, 'token': token})
+            message = get_template('signup_email.html').render({
+              'confirm_url': url
+            })
+            mail = EmailMessage('EasyStore Account Confirmation', message, to=[user.email], from_email=settings.EMAIL_HOST_USER)
+            mail.content_subtype = 'html'
+            mail.send()
+            messages.success(request,f'A confirmation email has been sent to {user.email}! Please confirm your account to finish the sign up process')
+            return redirect('base_generic')
+        else:
+            form=RegisterFrom()
+            messages.warning(request,'Registration failed!')
+
+        return render(request, 'signup.html', { 'form': form })
+
+class ConfirmRegistrationView(View):
+    
+    def get(self, request, user_id, token):
+        context={}
+        form=RegisterFrom()
+        user_id = force_text(urlsafe_base64_decode(user_id))
+        user = User.objects.get(pk=user_id)
+        
+        if user and user_tokenizer.check_token(user, token):
+            user.is_valid = True
+            user.save()
+            messages.success(request,'Sign up complete! You can login now.')
+            return redirect('base_generic')
+        else:
+            form=RegisterFrom()
+            messages.warning(request,'Sign up failed!')
+        context['form']=form
+        return render(request,'signup.html',context)
+
+        
 
 def send():
     send_mail('test ','mesaj de test','uraresgaming@gmail.com',['urares31@gmail.com'])

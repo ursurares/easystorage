@@ -1,0 +1,21 @@
+
+{% block navbar_upload %}
+    
+    <nav class="navbar navbar-dark navbar-expand-md bg-dark justify-content-center">
+    <a href="#" class="navbar-brand d-flex w-50 mr-auto">EasyStore</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbar3">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-collapse collapse w-100" id="collapsingNavbar3">
+        <ul class="navbar-nav ml-auto w-100 justify-content-end">
+            <li class="nav-item active">
+                <a class="nav-link m-2 disabled" href="#">{{ user.first_name }}</a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'logout_main' %}" class="nav-link m-2 menu-item">Log Out</a>
+            </li>
+            
+        </ul>
+    </div>
+    </nav>
+{% endblock %}

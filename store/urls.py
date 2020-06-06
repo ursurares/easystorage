@@ -7,10 +7,12 @@ urlpatterns = [
     path('home/',views.home,name='home'),
 
     path('', views.loginUser,name='base_generic'),
-    path('logout/', views.logoutUser,name='logout'),
-    path('register/', views.register,name='register'),
+    path('login', views.loginUser,name='login_main'),
+    path('logout/', views.logoutUser,name='logout_main'),
+    path('register/', views.RegisterView.as_view(),name='register'),
+    path('confirm-email/<str:user_id>/<str:token>/', views.ConfirmRegistrationView.as_view(), name='confirm_email'),
     
-
+    path('uploadDoc/',views.DocumentView.as_view(),name='upload_doc2'),
     path('upload/',views.upload,name='upload'),
     
     path('docs/',views.docs_list, name='docs_list'),

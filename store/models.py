@@ -26,11 +26,16 @@ class File(models.Model):
 def user_directory_path(instance, filename):
         # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
         return 'user_{0}/{1}'.format(instance.user.id, filename)
+        
+def get_file_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = "%s.%s" % (uuid.uuid4(), ext)
+    return filename
 
 class Document(models.Model):
     user=models.ForeignKey(User,null=True, on_delete=models.CASCADE)
     title=models.CharField(max_length=100)
-    source= models.FileField(upload_to=user_directory_path,validators=[validate_file_size])
+    source= models.FileField(upload_to=get_file_path,validators=[validate_file_size])
 
     class Meta:
         ordering = ['title']
@@ -44,6 +49,9 @@ class Document(models.Model):
     @property
     def url(self):
         return self.source.url
+    @property
+    def uploader(self):
+        return self.user
     
     def __str__(self):
         return self.title

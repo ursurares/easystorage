@@ -1,5 +1,5 @@
 {% extends 'base_generic.html' %}
-{% block navbar %}
+{% comment %} {% block navbar_home %}
     
     <nav class="navbar navbar-dark navbar-expand-md bg-dark justify-content-center">
     <a href="#" class="navbar-brand d-flex w-50 mr-auto">EasyStore</a>
@@ -18,19 +18,30 @@
         </ul>
     </div>
     </nav>
-{% endblock %}
+{% endblock %} {% endcomment %}
+
 {% block content %}
-  
-<div class="container ">
-  <p>Welcome {{ user.first_name }}!</p>
-  
-  <p>You have visisted this page {{num_visits}}
-    {% if num_visits == 1 %}time. 
-    {% else %} times.
-    {% endif %}
-  </p>
-  {% block docs %}
-  {% endblock %}
-  {% include "store\doc_list.html" %} 
-</div>
+{% include "store\navbar.html" %}
+<p></p>
+    <div class="container ">
+        <div class="card text-center">
+            
+                <h1 class="card-title h2">Welcome {{ user.first_name }}! &#129321</h1>
+                <div class="card-body p-2">
+                    <p class="card-text">You have visisted this page {{num_visits}}
+                        {% if num_visits == 1 %}time. 👍
+                        {% else %} times. 👍
+                        {% endif %}
+                    </p>
+                    <hr class="my-4">
+                    <p class="card-text">
+                        Upload your files freely. &#128516
+                    </p>
+                </div>
+            
+        </div>
+        
+        {% include "store\doc_list.html" %}  
+        
+    </div>
 {% endblock %}

@@ -15,8 +15,10 @@
     <script src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
     <link rel="stylesheet" type="text/css" href="static/css/styles.css">
 </head>
-<body>
 <style>
+  body{
+    background-color: azure
+  }
   #tooltip {
     background-color: #333;
     color: white;
@@ -24,8 +26,14 @@
     border-radius: 4px;
     font-size: 13px;
   }
+  .card{
+    border:2px solid rgba(52, 58, 64, 1);
+    border-radius: .50rem;
+  }
 </style>
-    {% block navbar %}
+<body>
+    
+    {% block navbar_home %}
     {% endblock %}
     {% if messges %}
       {% for message in messages %}
@@ -36,7 +44,8 @@
     {% endif %}
     {% block login %}
     {% endblock %}
-
+    {% block upload %}
+    {% endblock %}
     {% block content %}
     {% endblock %}
     <footer></footer>

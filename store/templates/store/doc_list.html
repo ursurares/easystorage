@@ -50,15 +50,90 @@
         .box-shadow--4dp {
         box-shadow: 0 4px 5px 0 rgba(0, 0, 0, .14), 0 1px 10px 0 rgba(0, 0, 0, .12), 0 2px 4px -1px rgba(0, 0, 0, .2)
         }
+        .b_download {
+            color: #494949 !important;
+            text-transform: uppercase;
+            text-decoration: none;
+            background: #ffffff;
+            padding: 10px;
+            border: 3px solid #343A40 !important;
+            display: inline-block;
+            transition: all 0.4s ease 0s;
+        }
+
+        .b_download:hover {
+            color: #ffffff !important;
+            border-color: #343A40 !important;
+            transition: all 0.4s ease 0s;
+            background: rgb(0,123,255); /* Old browsers */
+            background: -moz-linear-gradient(-45deg, rgba(0,123,255,1) 0%, rgba(52,58,64,1) 100%); /* FF3.6-15 */
+            background: -webkit-linear-gradient(-45deg, rgba(0,123,255,1) 0%,rgba(52,58,64,1) 100%); /* Chrome10-25,Safari5.1-6 */
+            background: linear-gradient(135deg, rgba(0,123,255,1) 0%,rgba(52,58,64,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#007bff', endColorstr='#343a40',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+        }
+        .b_delete {
+            
+            color: #494949 !important;
+            text-transform: uppercase;
+            text-decoration: none;
+            background: #ffffff;
+            padding: 10px;
+            border: 3px solid #343A40 !important;
+            display: inline-block;
+            transition: all 0.4s ease 0s;
+        }
+
+        .b_delete:hover {
+            color: #ffffff !important;
+            border-color:#343A40 !important;
+            transition: all 0.4s ease 0s;
+            background: rgb(204,0,0); /* Old browsers */
+            background: -moz-linear-gradient(-45deg, rgba(204,0,0,1) 0%, rgba(52,58,64,1) 100%); /* FF3.6-15 */
+            background: -webkit-linear-gradient(-45deg, rgba(204,0,0,1) 0%,rgba(52,58,64,1) 100%); /* Chrome10-25,Safari5.1-6 */
+            background: linear-gradient(135deg, rgba(204,0,0,1) 0%,rgba(52,58,64,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cc0000', endColorstr='#343a40',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+        }
+        .b_upload {
+            
+            color: #494949 !important;
+            text-transform: uppercase;
+            text-decoration: none;
+            background: #ffffff;
+            padding: 10px;
+            border: 3px solid #343A40 !important;
+            display: inline-block;
+            transition: all 0.4s ease 0s;
+        }
+
+        .b_upload:hover {
+            color: #ffffff !important;
+            border-color: #343A40 !important;
+            transition: all 0.4s ease 0s;
+            background: #388e3c; /* Old browsers */
+            background: -moz-linear-gradient(-45deg, #388e3c 1%, #343a40 100%); /* FF3.6-15 */
+            background: -webkit-linear-gradient(-45deg, #388e3c 1%,#343a40 100%); /* Chrome10-25,Safari5.1-6 */
+            background: linear-gradient(135deg, #388e3c 1%,#343a40 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#388e3c', endColorstr='#343a40',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+        }
+        .bg-light{
+            background-color: #343A40 !important;
+        }
+        
     </style>
 
     <h2>Docs</h2>
-    <h3>{{user_folder}}</h3>
+    
+
     {% if upload_available is True%}
-        <a href="{% url 'upload_doc' %}" class="btn btn-outline-primary box-shadow--4dp">
+    
+        {% comment %} {% include 'store/upload_doc.html' %} {% endcomment %}
+        {% comment %} <a href="{% url 'upload_doc' %}" class="btn btn-outline-primary box-shadow--4dp">
             Upload File
-        </a>
-        
+        </a> {% endcomment %}
+        <div class="button_cont" align="left">
+            <a class="b_upload" href="{% url 'upload_doc' %}" target="_self" rel="nofollow noopener">Upload File
+            </a>
+        </div>
     {% else %}
         <style>
             .tooltip-wrapper {
@@ -66,7 +141,7 @@
             }
             
         </style>
-        <div class="tooltip-wrapper" data-title="Storage size exceeded! Free up some storage before uploading something new.">
+        <div class="tooltip-wrapper" data-title="Storage size exceeded! Free up some storage before uploading something new. &#9762">
         <a href="{% url 'upload_doc' %}" class="btn btn-outline-primary disabled" aria-disabled="true" data-placement="right" data-toggle="tooltip" title="Hooray!">
             Upload File
         </a>
@@ -79,42 +154,65 @@
         
     {% endif %}
     {% endblock %}
-    <p>{{ totalsize_ceil }}% of available storage used</p>
+    <p class="text-center">{{ totalsize_ceil }}% of available storage used. 💽</p>
+
+    {% comment %} Progress Bar {% endcomment %}
+
     <div class="shadow-sm p-3 mb-2 bg-light rounded">
-    <div class="progress">
-        <div class="progress-bar progress-bar-striped progress-bar-animated {{ progressbar_color }}" role="progressbar" style="width: {{ totalsize_ceil }}%;" aria-valuenow="{{ totalsize_ceil }}" aria-valuemin="0" aria-valuemax="1000"></div>
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated {{ progressbar_color }}" role="progressbar" style="width: {{ totalsize_ceil }}%;" aria-valuenow="{{ totalsize_ceil }}" aria-valuemin="0" aria-valuemax="1000"></div>
+        </div>
     </div>
-    </div>
+
+
     <div>
-        <table class="table table-hover table-dark table-bordered">
-            <caption>Your uploaded files</caption>
-            <thead >
-                <tr>
-                    <th class="text-center">Title</th>
-                    <th class="text-center">Size</th>
-                    <th class="text-center">Source</th>
-                    <th class="text-center">Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for doc in docs %}
-                <tr>
-                    <td class="text-center">{{doc.filename}}</td>
-                    <td class="text-center">{{ doc.size|filesizeformat }}</td>
-                    
-                    <td class="text-center">
-                        <a href="{{ doc.url }}" class="badge badge-pill badge-primary" target="_blank">
-                            Download
-                        </a></td>
-                    <td class="text-center">
-                        <form method="post" action="{% url 'delete_doc' doc.pk%}">
-                            {% csrf_token %}
-                            <button type="submit" class="badge badge-pill badge-danger">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        {% if docs %}
+            <table class="table table-hover table-dark table-bordered">
+                <caption>Your uploaded files</caption>
+                <thead >
+                    <tr>
+                        <th class="text-center">Title</th>
+                        <th class="text-center">Size</th>
+                        <th class="text-center">Source</th>
+                        <th class="text-center">Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doc in docs %}
+                        <tr>
+                            <td class="text-center">{{doc.title}}</td>
+                            <td class="text-center">{{ doc.size|filesizeformat }}</td>
+                            
+                            <td class="text-center">
+                                {% comment %} <a href="{{ doc.url }}" class="badge badge-pill badge-primary" target="_blank">
+                                    Download
+                                </a></td> {% endcomment %}
+                                <div class="button_cont" align="center">
+                                    <a class="b_download" href="{{ doc.url }}" target="_blank" rel="nofollow noopener">Download
+                                    </a>
+                                </div>
+                            <td class="text-center">
+                                {% comment %} <form method="post" action="{% url 'delete_doc' doc.pk%}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="badge badge-pill badge-danger">Delete</button>
+                                </form> {% endcomment %}
+                                <div class="button_cont" align="center">
+                                    <form method="post" action="{% url 'delete_doc' doc.pk%}">
+                                        {% csrf_token %}
+                                            <button type="submit" class="b_delete" target="_blank" rel="nofollow noopener">Delete
+                                            </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>
+                No file was uploaded
+            </p>
+        {% endif%}
+            
     </div>
 {% endblock %}

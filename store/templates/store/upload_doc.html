@@ -1,14 +1,31 @@
-
+{% extends 'base_generic.html' %}
 
 {% load crispy_forms_tags %}
 
 {% block upload %}
-    <h2>Upload Docs</h2>
+    {% include "store\navbar.html" %}
+    <p></p>
+    <div class="container">
+    <h2>Upload File</h2>
     <form method="POST" enctype="multipart/form-data" id='test1'>
         {% csrf_token %}
-        {{form|crispy}}
+        {% for hidden_field in form.hidden_fields %}
+          {{ hidden_field }}
+        {% endfor %}
+
+        {% for field in form.visible_fields %}
+          <div class=" form-group">
+            {{field.label_tag}}
+            {{field}}
+            {% if field.help_text %}
+              <small class="form-text text-muted">{{ field.help_text }}</small>
+            {% endif %}
+          </div>
+        {% endfor %}
+        
         <button type="submit" class="btn btn-primary btn-sm float-left" onclick='showFileSize();'>Upload</button>
     </form>
+    </div>
     <script type='text/javascript'>
       function showFileSize() {
           var input, file;
@@ -33,8 +50,9 @@
           }
           else {
               file = input.files[0];
-              if(file.size>1073741822){
-                alert( "File " + file.name + " is too big. You can only upload files smaller than 1GB);
+              if(file.size>1073741824){
+                alert( "File " + file.name + " is too big. You can only upload files smaller than 1GB");
+                request.abort();
               }
               return;
               
@@ -63,16 +81,18 @@
       
     </script> {% endcomment %}
 
-{% comment %} <form class="md-form" action="#">
-  <div class="file-field">
-    <div class="btn btn-primary btn-sm float-left">
-      <span>Choose files</span>
-      <input type="file" name="doc" multiple>
-    </div>
-    <div class="file-path-wrapper">
-      <input class="file-path validate" type="text" placeholder="Upload one or more files">
-    </div>
-  </div>
-</form> {% endcomment %}
+    {% comment %} 
+      <form class="md-form" action="#">
+        <div class="file-field">
+          <div class="btn btn-primary btn-sm float-left">
+            <span>Choose files</span>
+            <input type="file" name="doc" multiple>
+          </div>
+          <div class="file-path-wrapper">
+            <input class="file-path validate" type="text" placeholder="Upload one or more files">
+          </div>
+        </div>
+      </form> 
+    {% endcomment %}
 
 {% endblock %}

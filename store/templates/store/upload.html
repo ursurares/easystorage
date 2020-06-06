@@ -1,6 +1,9 @@
 {% extends 'base_generic.html' %}
-{% block content %}
-    <h2>Upload</h2>
+{% block upload %}
+    {% include "store\navbar.html" %}
+    <p></p>
+    <div class="container">
+    {% comment %} <h2>Upload</h2>
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <input type="file" name="doc">
@@ -8,5 +11,24 @@
     </form>
     {% if url %}
         <p>Uploaded files:<a href="{{url}}">{{url}}</a></p>
-    {% endif %}
+    {% endif %} {% endcomment %}
+        <form method="POST" enctype="multipart/form-data" id='test1'>
+            {% csrf_token %}
+            {% for hidden_field in form.hidden_fields %}
+            {{ hidden_field }}
+            {% endfor %}
+
+            {% for field in form.visible_fields %}
+            <div class=" form-group">
+                {{field.label_tag}}
+                {{field}}
+                {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <button type="submit" class="btn btn-primary btn-sm float-left" onclick='showFileSize();'>Upload</button>
+        </form>
+    </div>
 {% endblock %}

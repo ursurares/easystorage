@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'store',
-    'accounts',
+    #'accounts',
     'django_registration',
 ]
 
@@ -58,8 +58,11 @@ ROOT_URLCONF = 'easystorage.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['store/templates',
-                'store/templates/store'],
+        'DIRS': [
+            os.path.join(BASE_DIR,'templates'),
+            'store/templates/store' ,
+            'store/templates',
+                ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -128,11 +131,11 @@ STATIC_ROOT= os.path.join(BASE_DIR, 'root')
 
 STATICFILES_DIRS=[
     os.path.join(BASE_DIR,'static/boot'),
-    #os.path.join(BASE_DIR, 'boot'),
+    os.path.join(BASE_DIR, 'store/static/css'),
 
 ]
 
-
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 #Register
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  
 MAILER_EMAIL_BACKEND = EMAIL_BACKEND 
@@ -142,12 +145,15 @@ EMAIL_HOST_USER = 'easystorestart@gmail.com'
 EMAIL_HOST_PASSWORD = 'capracupatruiezi!'
 EMAIL_PORT = 587
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
+
 ACCOUNT_ACTIVATION_DAYS = 7
+PASSWORD_RESET_TIMEOUT_DAYS=2
 REGISTRATION_OPEN = True
 
 
 
-FILE_UPLOAD_MAX_MEMORY_SIZE=2147483648
+DATA_UPLOAD_MAX_MEMORY_SIZE=1073741824
 
 
 MEDIA_ROOT=os.path.join(BASE_DIR,'media')
