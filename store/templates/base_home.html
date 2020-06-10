@@ -34,9 +34,16 @@
                         {% endif %}
                     </p>
                     <hr class="my-4">
-                    <p class="card-text">
-                        Upload your files freely. &#128516
-                    </p>
+                    {% if messages %}
+                        {% for message in messages %}
+                            
+                            <p id="messages" class="message card-text">{{ message }}</p>
+                        {% endfor %}
+                    {% else %}
+                        <p class="card-text">
+                            Upload your files freely. &#128516
+                        </p>
+                    {% endif %}
                 </div>
             
         </div>

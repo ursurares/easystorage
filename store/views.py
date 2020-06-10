@@ -46,7 +46,7 @@ def home(request):
         progressbar_color="bg-success"
     elif totalsize>33 and totalsize<=66:
         progressbar_color="bg-info"
-    elif totalsize>66 and totalsize<=99:
+    elif totalsize>66 and totalsize<=95:
         progressbar_color="bg-warning"
     else:
         progressbar_color="bg-danger"
@@ -122,7 +122,11 @@ def upload_doc(request):
                 file.title=file.filename
                 file.validate_unique()
                 file.clean_fields()
-                file.save()
+                if(file.size+totalsize_global>1073741824):
+                    messages.error(request,'Not enough storage space!')
+                else:
+                    messages.success(request,'File uploaded successfully!')
+                    file.save()
                 return redirect('home')
         else:
             form=DocumentForm()
